@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Hello World</title>
+    <!-- Add some CSS to change client UI -->
+    <style>
+    body {
+        background-color: #232F3E;
+        }
+    label, button {
+        color: #FF9900;
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: 20px;
+        margin-left: 40px;
+        }
+     input {
+        color: #232F3E;
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: 20px;
+        margin-left: 20px;
+        }
+    </style>
+    <script>
+        // define the callAPI function that takes a first name and last name as parameters
+        var callAPI = () => {
+            // instantiate a headers object
+            var myHeaders = new Headers();
+            // add content type header to object
+            myHeaders.append("Content-Type", "application/json");
+            // using built in JSON utility package turn object to string and store in a variable
+            //var raw = JSON.stringify({"UserID":id});
+            // create a JSON object with parameters for API call and store in a variable
+            var requestOptions = {
+                method: 'GET', 
+                headers: myHeaders
+                //body: raw,
+                //redirect: 'follow'
+            };
+            // make API call with parameters and use promises to get response
+            fetch("https://zqsv4te66e.execute-api.us-east-1.amazonaws.com/Dev/users", requestOptions)
+			.then(response => response.text())
+            //.then(result => console.log(result))
+            .then(result => {
+                console.log(result)
+                let users = JSON.parse(result);
+                console.log(users);
+                count = users.Items.length
+                console.log(count)
+                usersToHTML(users);
+            })
+            .catch(error => console.log('error', error));
+        }
+
+        let usersToHTML = (users) => {
+            let listU = document.getElementById("profile");
+            users.Items.forEach((e, i) => {
+                let userD = `
+            <div class="about-a1">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-lg-12 col-md-12 col-sm-12">
+                                <div class="row align-items-center about-main-info">
+                                    <div class="col-lg-8 col-md-6 col-sm-12">
+                                        <h2><span>${users.Items[i].FirstName} ${users.Items[i].LastName}</span></h2>
+                                        <p>Telefono: ${users.Items[i].Phone}</p>
+                                        <p>Suscripcion: ${users.Items[i].Subscription}</p>
+                                        <p>Cita: ${users.Items[i].Schedule}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div> 
+            `;
+            listU.insertAdjacentHTML("beforeend", userD);
+            });
+        }
+
+    </script>
+</head>
+<body>
+    <form>
+        <!-- set button onClick method to call function we defined passing input values as parameters -->
+        <button type="button" onclick="callAPI()">Ver Usuarios</button>
+    </form>
+    <div id="profile">
+        <div class="row">
+            <div class="col-lg-12 text-center">
+                <div class="title-box">
+                    <h2>Usuarios:</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+	
+</body>
+</html>
